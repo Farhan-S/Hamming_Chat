@@ -86,7 +86,7 @@ public class ConversationActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        String originalText = "Hello, World!";
+        String originalText = "Hello, World!sfgsfdgfg dugaud fguagu agfuaoidgfu au98e9r agfjajdfi8a9dsf ejr uppwe9ajdkaj 89uew jadji u9WE AJEI AU98WEJ ae 9aeu aje uFEJADFIFJADSFUAJDFUAE 898WEIADUF A8F8E JAF ASE8FAEF8 WEJfaduf SF EWRFEF AJFU9 8fWRPUWef EWF8UEWfHWNE FJWWEf8 9WERUWEF WEfOWF HAGGJAEFHSFUEWF JFUJPFUPAFUJA FU VALID";
         String binaryData = TextToBinaryConverter.textToBinary(originalText);
         Log.d("binData",binaryData);
         String encodedData = HammingCode.encodeLongString(binaryData);
@@ -110,7 +110,7 @@ public class ConversationActivity extends BaseActivity {
         return encodedData;
 
     }
-    private String decode(String encodedData){
+    public String decode(String encodedData){
         String decodedBinary = HammingCode.decodeLongString(encodedData);
         Log.d("decoded",encodedData);
 
@@ -128,6 +128,8 @@ public class ConversationActivity extends BaseActivity {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+
+
         });
         binding.imagePhoneCall.setOnClickListener(view -> startPhoneCall());
     }
@@ -188,6 +190,8 @@ public class ConversationActivity extends BaseActivity {
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .add(chatMessage);
 
+        chatMessage.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString()) ;
+
         if (conversationId != null) {
             updateConversationConversion(binding.inputMessage.getText().toString());
         } else {
@@ -198,7 +202,8 @@ public class ConversationActivity extends BaseActivity {
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.getId());
             conversation.put(Constants.KEY_RECEIVER_NAME, receiverUser.getName());
             conversation.put(Constants.KEY_RECEIVER_IMAGE, receiverUser.getImage());
-            conversation.put(Constants.KEY_MESSAGE, encode(binding.inputMessage.getText().toString()));
+            conversation.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
+
             conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversion(conversation);
@@ -213,7 +218,9 @@ public class ConversationActivity extends BaseActivity {
                 data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
                 data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE, encode(binding.inputMessage.getText().toString()));
+                data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
+//                Log.d("chatMessage encode",encode(binding.inputMessage.getText().toString()));
+//                Log.d("chatMessage encode",decode(encode(binding.inputMessage.getText().toString())));
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MESSAGE_DATA, data);
@@ -243,6 +250,7 @@ public class ConversationActivity extends BaseActivity {
                 .addSnapshotListener(eventListener);
     }
 
+
     @SuppressLint("NotifyDataSetChanged")
     private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
         if (error != null) {
@@ -253,7 +261,9 @@ public class ConversationActivity extends BaseActivity {
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.setMessage(decode(documentChange.getDocument().getString(Constants.KEY_MESSAGE)));
+                    Log.d("document",documentChange.getDocument().getString(Constants.KEY_MESSAGE));
+                    String s=decode(documentChange.getDocument().getString(Constants.KEY_MESSAGE));
+                    chatMessage.setMessage(s);
                     chatMessage.setSenderId(documentChange.getDocument().getString(Constants.KEY_SENDER_ID));
                     chatMessage.setReceiverId(documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID));
                     chatMessage.setDateTime(getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP)));

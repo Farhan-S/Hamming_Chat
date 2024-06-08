@@ -63,8 +63,11 @@ public class HammingCode {
         StringBuilder decoded = new StringBuilder();
         for (int i = 0; i < data.length(); i += 7) {
             String chunk = data.substring(i, Math.min(i + 7, data.length()));
-            decoded.append(decode(chunk));
+            if (chunk.length() == 7) {
+                decoded.append(decode(chunk));
+            }
         }
         return decoded.toString();
     }
+
 }

@@ -1,5 +1,7 @@
 package com.pirhotech.hammingchat.models;
 
+import com.pirhotech.hammingchat.activities.ConversationActivity;
+
 import java.util.Date;
 
 public class ChatMessage {
