@@ -186,6 +186,7 @@ public class ConversationActivity extends BaseActivity {
         chatMessage.put(Constants.KEY_RECEIVER_ID, receiverUser.getId());
         chatMessage.put(Constants.KEY_MESSAGE, encode(binding.inputMessage.getText().toString())) ;
         chatMessage.put(Constants.KEY_TIMESTAMP, new Date());
+        preferenceManager.putString("input",binding.inputMessage.getText().toString());
 
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .add(chatMessage);
@@ -263,6 +264,13 @@ public class ConversationActivity extends BaseActivity {
                     ChatMessage chatMessage = new ChatMessage();
                     Log.d("document",documentChange.getDocument().getString(Constants.KEY_MESSAGE));
                     String s=decode(documentChange.getDocument().getString(Constants.KEY_MESSAGE));
+                    if(HammingCode.ifErrorFixed){
+                        showToast("1 bit Error is fixed");
+                    } else if (!s.equals(preferenceManager.getString("input")))
+                    {
+                        showToast("there is some error happend");
+                    }
+
                     chatMessage.setMessage(s);
                     chatMessage.setSenderId(documentChange.getDocument().getString(Constants.KEY_SENDER_ID));
                     chatMessage.setReceiverId(documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID));

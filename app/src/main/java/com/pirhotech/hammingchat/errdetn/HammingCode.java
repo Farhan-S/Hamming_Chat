@@ -1,6 +1,7 @@
 package com.pirhotech.hammingchat.errdetn;
 
 public class HammingCode {
+    public static boolean ifErrorFixed=false;
     public static String encode(String data) {
         if (data.length() != 4) {
             throw new IllegalArgumentException("Input data should be 4 bits long.");
@@ -23,6 +24,8 @@ public class HammingCode {
         return encoded.toString();
     }
 
+
+
     public static String decode(String data) {
         if (data.length() != 7) {
             throw new IllegalArgumentException("Encoded data should be 7 bits long.");
@@ -40,6 +43,10 @@ public class HammingCode {
         int errorPosition = c1 + (c2 * 2) + (c4 * 4);
         if (errorPosition != 0) {
             bits[errorPosition - 1] ^= 1; // Fix the error
+            ifErrorFixed=true;
+        }
+        else{
+            ifErrorFixed=false;
         }
 
         StringBuilder decoded = new StringBuilder();
