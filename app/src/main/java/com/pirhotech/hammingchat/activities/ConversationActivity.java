@@ -28,6 +28,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.pirhotech.hammingchat.adapters.ConversationAdapter;
 import com.pirhotech.hammingchat.databinding.ActivityConversationBinding;
 import com.pirhotech.hammingchat.e2ee.CryptoManager;
+import com.pirhotech.hammingchat.errdetn.HammingCode;
+import com.pirhotech.hammingchat.errdetn.TextToBinaryConverter;
 import com.pirhotech.hammingchat.models.ChatMessage;
 import com.pirhotech.hammingchat.models.User;
 import com.pirhotech.hammingchat.networks.ApiClient;
@@ -84,13 +86,38 @@ public class ConversationActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        String s1=encryptMessage("hellow world");
-        Log.d("encrypted message",s1);
+        String originalText = "Hello, World!";
+        String binaryData = TextToBinaryConverter.textToBinary(originalText);
+        Log.d("binData",binaryData);
+        String encodedData = HammingCode.encodeLongString(binaryData);
+        Log.d("encoded",encodedData);
 
-       String s= decryptMessage(s1);
-       Log.d("decrypted message",s);
+        String decodedBinary = HammingCode.decodeLongString(encodedData);
+        Log.d("decoded",binaryData);
+
+        String decodedText = TextToBinaryConverter.binaryToText(decodedBinary);
+        Log.d("decodedtext",decodedText);
 
 
+    }
+
+    private  String encode(String originalText)
+    {
+        String binaryData = TextToBinaryConverter.textToBinary(originalText);
+        Log.d("binData",binaryData);
+        String encodedData = HammingCode.encodeLongString(binaryData);
+        Log.d("encoded",encodedData);
+        return encodedData;
+
+    }
+    private String decode(String encodedData){
+        String decodedBinary = HammingCode.decodeLongString(encodedData);
+        Log.d("decoded",encodedData);
+
+        String decodedText = TextToBinaryConverter.binaryToText(decodedBinary);
+        Log.d("decodedtext",decodedText);
+
+        return decodedText;
     }
 
     private void setListeners() {
@@ -155,7 +182,7 @@ public class ConversationActivity extends BaseActivity {
         HashMap<String, Object> chatMessage = new HashMap<>();
         chatMessage.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         chatMessage.put(Constants.KEY_RECEIVER_ID, receiverUser.getId());
-        chatMessage.put(Constants.KEY_MESSAGE,encryptMessage(binding.inputMessage.getText().toString())) ;
+        chatMessage.put(Constants.KEY_MESSAGE, encode(binding.inputMessage.getText().toString())) ;
         chatMessage.put(Constants.KEY_TIMESTAMP, new Date());
 
         database.collection(Constants.KEY_COLLECTION_CHAT)
@@ -171,8 +198,8 @@ public class ConversationActivity extends BaseActivity {
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.getId());
             conversation.put(Constants.KEY_RECEIVER_NAME, receiverUser.getName());
             conversation.put(Constants.KEY_RECEIVER_IMAGE, receiverUser.getImage());
-            conversation.put(Constants.KEY_MESSAGE, encryptMessage(binding.inputMessage.getText().toString()));
-            conversation.put(Constants.KEY_LAST_MESSAGE, encryptMessage(binding.inputMessage.getText().toString()));
+            conversation.put(Constants.KEY_MESSAGE, encode(binding.inputMessage.getText().toString()));
+            conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversion(conversation);
         }
@@ -186,7 +213,7 @@ public class ConversationActivity extends BaseActivity {
                 data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
                 data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE, encryptMessage(binding.inputMessage.getText().toString()));
+                data.put(Constants.KEY_MESSAGE, encode(binding.inputMessage.getText().toString()));
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MESSAGE_DATA, data);
@@ -226,7 +253,7 @@ public class ConversationActivity extends BaseActivity {
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.setMessage(decryptMessage(documentChange.getDocument().getString(Constants.KEY_MESSAGE)));
+                    chatMessage.setMessage(decode(documentChange.getDocument().getString(Constants.KEY_MESSAGE)));
                     chatMessage.setSenderId(documentChange.getDocument().getString(Constants.KEY_SENDER_ID));
                     chatMessage.setReceiverId(documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID));
                     chatMessage.setDateTime(getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP)));
