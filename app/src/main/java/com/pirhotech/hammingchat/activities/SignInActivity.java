@@ -45,6 +45,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private void setClickListener() {
         binding.textCreateNewAccount.setOnClickListener(this);
         binding.buttonSignIn.setOnClickListener(this);
+        binding.textForgotYourPassword.setOnClickListener(this);
     }
 
     @Override
@@ -59,6 +60,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             if (isValidSignInDetails()) {
                 signIn();
             }
+        } else if (id == R.id.textForgotYourPassword) {
+
+            if(!binding.inputMobileNumber.getText().toString().isEmpty())
+            {
+                forgetPassword();
+            }
+            else {
+                Toast.makeText(this,"Enter a valid Phone Number",Toast.LENGTH_SHORT).show();
+            }
+
         } else {
             Toast.makeText(this, "Not valid Click", Toast.LENGTH_SHORT).show();
         }
@@ -81,6 +92,41 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         } else {
             return true;
         }
+    }
+
+    private void forgetPassword(){
+        loading(true);
+
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.KEY_COLLECTION_USERS)
+                .whereEqualTo(Constants.KEY_PHONE, binding.pickerCountryCode.getFullNumberWithPlus().replace(" ", ""))
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
+                        DocumentSnapshot snapshot = task.getResult().getDocuments().get(0);
+
+                        HashMap<String, Object> userData = new HashMap<>();
+                        userData.put(Constants.KEY_USER_ID, snapshot.getId());
+                        userData.put(Constants.KEY_NAME, snapshot.get(Constants.KEY_NAME));
+                        userData.put(Constants.KEY_PHONE, binding.pickerCountryCode.getFullNumberWithPlus().replace(" ", ""));
+                        userData.put(Constants.KEY_IMAGE, snapshot.get(Constants.KEY_IMAGE));
+
+                        preferenceManager.putString(Constants.KEY_USER_ID, (String) userData.get(Constants.KEY_USER_ID));
+                        preferenceManager.putString(Constants.KEY_NAME, (String) userData.get(Constants.KEY_NAME));
+                        preferenceManager.putString(Constants.KEY_PHONE, (String) userData.get(Constants.KEY_PHONE));
+                        preferenceManager.putString(Constants.KEY_IMAGE, (String) userData.get(Constants.KEY_IMAGE));
+
+                        Intent intent = new Intent(getApplicationContext(), ProcessOTPActivity.class);
+                        intent.putExtra(Constants.USER_DATA, userData);
+                        intent.putExtra(Constants.KEY_PHONE, binding.pickerCountryCode.getFullNumberWithPlus().replace(" ", ""));
+                        intent.putExtra(Constants.STARTER_ACTIVITY, "forgetPassword");
+                        startActivity(intent);
+                        loading(false);
+                    } else {
+                        Toast.makeText(this, "Unable to sign in.", Toast.LENGTH_SHORT).show();
+                        loading(false);
+                    }
+                });
     }
 
 

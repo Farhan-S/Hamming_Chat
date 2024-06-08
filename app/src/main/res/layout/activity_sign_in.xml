@@ -96,7 +96,8 @@
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            />
 
         <FrameLayout
             android:layout_width="match_parent"

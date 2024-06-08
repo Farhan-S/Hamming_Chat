@@ -34,7 +34,7 @@ public class MainActivity extends BaseActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.toolbar.setTitle("Messenger");
+        binding.toolbar.setTitle("Hamming Chat");
 
         preferenceManager = new PreferenceManager(getApplicationContext());
 

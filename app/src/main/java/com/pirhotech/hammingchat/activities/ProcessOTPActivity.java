@@ -91,6 +91,14 @@ public class ProcessOTPActivity extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+                        } else if (starterActivity.equals("forgetPassword")) {
+                            showToast("Verified Successfully.");
+
+                            // Start MainActivity
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
                         } else {
                             Toast.makeText(this, "Invalid starter Activity", Toast.LENGTH_SHORT).show();
                         }

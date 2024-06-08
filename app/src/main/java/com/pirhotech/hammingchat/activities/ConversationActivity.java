@@ -8,7 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.crypto.tink.subtle.Base64;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -39,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +83,14 @@ public class ConversationActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        String s1=encryptMessage("hellow world");
+        Log.d("encrypted message",s1);
+
+       String s= decryptMessage(s1);
+       Log.d("decrypted message",s);
+
+
     }
 
     private void setListeners() {
@@ -125,12 +135,15 @@ public class ConversationActivity extends BaseActivity {
     private String decryptMessage(String base64EncryptedMessage) {
         try {
             byte[] encryptedMessage = Base64.decode(base64EncryptedMessage, Base64.DEFAULT);
-            return cryptoManager.decrypt(encryptedMessage, null);
+            String decryptedMessage = cryptoManager.decrypt(encryptedMessage, null);
+            Log.d("decrypted data", decryptedMessage);
+            return decryptedMessage;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
 
 
     private void sendMessage()  {
@@ -159,7 +172,7 @@ public class ConversationActivity extends BaseActivity {
             conversation.put(Constants.KEY_RECEIVER_NAME, receiverUser.getName());
             conversation.put(Constants.KEY_RECEIVER_IMAGE, receiverUser.getImage());
             conversation.put(Constants.KEY_MESSAGE, encryptMessage(binding.inputMessage.getText().toString()));
-            conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
+            conversation.put(Constants.KEY_LAST_MESSAGE, encryptMessage(binding.inputMessage.getText().toString()));
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversion(conversation);
         }

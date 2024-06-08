@@ -21,25 +21,28 @@
         android:theme="@style/Theme.Messenger"
         tools:targetApi="34">
         <activity
-            android:name="com.pirhotech.hammingchat.activities.ViewStory"
+            android:name=".activities.ResetPasswordActivity"
             android:exported="false" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.EditStoryActivity"
+            android:name=".activities.ViewStory"
             android:exported="false" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.SettingsActivity"
+            android:name=".activities.EditStoryActivity"
             android:exported="false" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.ConversationActivity"
+            android:name=".activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.UsersActivity"
+            android:name=".activities.ConversationActivity"
             android:exported="false" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.ProcessOTPActivity"
+            android:name=".activities.UsersActivity"
             android:exported="false" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.SignInActivity"
+            android:name=".activities.ProcessOTPActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SignInActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -49,15 +52,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pirhotech.hammingchat.activities.SignUpActivity"
+            android:name=".activities.SignUpActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.pirhotech.hammingchat.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true" />
 
         <service
-            android:name="com.pirhotech.hammingchat.firebase.MessagingService"
+            android:name=".firebase.MessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
